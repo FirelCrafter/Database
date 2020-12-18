@@ -9,9 +9,19 @@ class Base:
     def watch_humans(self):
         return ['ID#{} {} {} Date of birth: {}'.format(id[0], id[1], id[2], id[3]) for id in self.humans_id] if \
             self.humans_id is not [] else 'Base of humans is empty'
+
     def watch_crimes(self):
-        return ['ID#{} Type: {}, adress: {}, date: {}'.format(i[0], i[1], i[2], i[3]) for i in self.crimes_id] if\
+        return ['ID#{} Type: {}, adress: {}, date: {}'.format(i[0], i[1], i[2], i[3]) for i in self.crimes_id] if \
             self.crimes_id is not [] else 'Base of crimes is empty'
+
+
+class Exists(Base):
+    def __init__(self, f_name, l_name, d_birth):
+        super().__init__()
+        self.f_name = f_name
+        self.l_name = l_name
+        self.d_birth = d_birth
+
 
 class Human:
     def __init__(self, f_name, l_name, d_birth):
@@ -22,12 +32,15 @@ class Human:
         self.base = None
 
     def add_to_base(self, base):
-        self.base = base
-        self.base.humans_counter += 1
-        self.id = self.base.humans_counter
-        self.base.humans_id.append([self.id, self.f_name, self.l_name, self.d_birth])
-        print('ID#{} {} {} Date of birth: {} is added to Database'
-              .format(self.id, self.f_name, self.l_name, self.d_birth))
+            self.base = base
+            self.base.humans_counter += 1
+            self.id = self.base.humans_counter
+            self.base.humans_id.append([self.id, self.f_name, self.l_name, self.d_birth])
+            print('ID# {} {} {} Date of birth: {} is added to Database'
+                  .format(self.id, self.f_name, self.l_name, self.d_birth))
+
+
+
 
 
 class Crime:
@@ -56,9 +69,9 @@ class Crime:
 class Criminal(Human, Crime):
     pass
 
+
 class Victim(Human, Crime):
     pass
-
 
 
 ########################################################################################################################
@@ -78,8 +91,14 @@ while True:
         f_name = input('Enter first name: ')
         l_name = input('Enter last name: ')
         b_date = input('Enter birth date: ')
-        new_human = Human(f_name, l_name, b_date)
-        new_human.add_to_base(base)
+        exists = Exists(f_name, l_name, b_date)
+        if base.humans_id:
+            for i in base.humans_id:
+                if i[1] == exists.f_name and i[2] == exists.l_name and i[3] == exists.d_birth:
+                    print('This human is already exists on ID# {}'.format(i[0]))
+        else:
+            new_human = Human(f_name, l_name, b_date)
+            new_human.add_to_base(base)
     elif choice == '2':
         date = input('Enter date: ')
         type = input('Enter type: ')
