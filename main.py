@@ -7,11 +7,11 @@ class Base:
         # тут думаю вместо спиков лучше словари, чтобы можно было легко реализовать алгоритм бинарного поиска по ID
 
     def watch_humans(self):
-        return ['ID#{} {} {} Date of birth: {}'.format(id[0], id[1], id[2], id[3]) for id in self.humans_id] if \
+        return ['ID# {} {} {} Date of birth: {}'.format(id[0], id[1], id[2], id[3]) for id in self.humans_id] if \
             self.humans_id is not [] else 'Base of humans is empty'
 
     def watch_crimes(self):
-        return ['ID#{} Type: {}, adress: {}, date: {}'.format(i[0], i[1], i[2], i[3]) for i in self.crimes_id] if \
+        return ['ID# 5{} Type: {}, adress: {}, date: {}'.format(i[0], i[1], i[2], i[3]) for i in self.crimes_id] if \
             self.crimes_id is not [] else 'Base of crimes is empty'
 
 
@@ -40,9 +40,6 @@ class Human:
                   .format(self.id, self.f_name, self.l_name, self.d_birth))
 
 
-
-
-
 class Crime:
     def __init__(self, date, adress, type):
         self.date = date
@@ -51,6 +48,7 @@ class Crime:
         self.id = None
         self.criminal = None
         self.victim = None
+        self.base = None
 
     def add_to_base(self, base):
         self.base = base
@@ -66,8 +64,15 @@ class Crime:
 # такое часто бывает в реальной жизни, и чтобы не "дублировать людей" как бы это реализовать, я думаю создать еще список
 # в котором будут указываться преступления в которых человек был жертвой или преступником
 
-class Criminal(Human, Crime):
-    pass
+class Criminal(Base):
+    def __init__(self, h_id, c_id):
+        super().__init__()
+        self.h_id = h_id
+        self.c_id = c_id
+        self.criminal_list = []
+
+    def criminal_add(self, criminal):
+        self.criminal_list.append(criminal)
 
 
 class Victim(Human, Crime):
@@ -82,11 +87,13 @@ print('Welcome to database!' + '\n'
       + '2. Add crime' + '\n'
       + '3. Watch humans' + '\n'
       + '4. Watch crimes' + '\n'
-      + '5. Exit')
+      + '5. Add criminal connection' + '\n'
+      + '6. Exit')
 base = Base()
 
 while True:
     choice = input('Write number: ')
+############################################
     if choice == '1':
         f_name = input('Enter first name: ')
         l_name = input('Enter last name: ')
@@ -99,17 +106,51 @@ while True:
         else:
             new_human = Human(f_name, l_name, b_date)
             new_human.add_to_base(base)
+
+############################################
+
     elif choice == '2':
         date = input('Enter date: ')
         type = input('Enter type: ')
         adress = input('Enter adress: ')
         new_crine = Crime(date, adress, type)
         new_crine.add_to_base(base)
+
+############################################
+
     elif choice == '3':
         print(base.watch_humans())
+
+############################################
+
     elif choice == '4':
         print(base.watch_crimes())
+
+############################################
+
     elif choice == '5':
+        h_id = input('Insert human ID # ')
+        c_id = input('Insert crime ID # ')
+        criminal = Criminal(h_id, c_id)
+        human = []
+        if base.humans_id:
+            for i in base.humans_id:
+                if i[0] == int(h_id):
+                    human.append([i[1], i[2], i[3]])
+                else:
+                    print('Human ID # {} not found'.format(h_id))
+        crime = []
+        if base.crimes_id:
+            for i in base.crimes_id:
+                if i[0] == int(c_id):
+                    crime.append([i[0], i[1], i[2]])
+                else:
+                    print('Crime ID # {} not found'.format(c_id))
+        criminal.criminal_add(human+crime)
+        print('Connection between human ID# {} and crime ID# {} was added'.format(h_id, c_id))
+
+
+    elif choice == '6':
         break
     else:
         print('Wrong number')
