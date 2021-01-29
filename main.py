@@ -1,4 +1,5 @@
 from datetime import date
+from prettytable import PrettyTable
 
 
     #########    Classes   ##############
@@ -13,10 +14,18 @@ class Base:
         # тут думаю вместо спиков лучше словари, чтобы можно было легко реализовать алгоритм бинарного поиска по ID
 
     def watch_humans(self):
-        return ['ID# {} {} {} Date of birth: {}'.format(id[0], id[1], id[2], id[3]) for id in self.humans_id] if \
-            self.humans_id is not [] else 'Base of humans is empty'
+        if self.humans_id:
+            table = PrettyTable()
+            table.head_names = ['ID#', 'First Name', 'Last Name', 'Date of birth']
+            for human in self.humans_id:
+                table.add_row([human[0], human[1], human[2], human[3]])
+            return table
+        else:
+            return 'Base of humans is empty'
 
     def watch_crimes(self):
+        if self.crimes_id:
+            table
         return ['ID# 5{} Type: {}, adress: {}, date: {}'.format(i[0], i[1], i[2], i[3]) for i in self.crimes_id] if \
             self.crimes_id is not [] else 'Base of crimes is empty'
 
