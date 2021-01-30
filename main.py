@@ -6,43 +6,23 @@ from prettytable import PrettyTable
 
 class Base:
     def __init__(self):
-        self.humans_counter = 0
-        self.crimes_counter = 0
-        self.humans_id = []
-        self.crimes_id = []
-        # тут думаю вместо спиков лучше словари, чтобы можно было легко реализовать алгоритм бинарного поиска по ID
+        self.humans = []
+        self.crimes = []
 
-    def watch_humans(self):
-        if self.humans_id:
+
+class PrintData(Base):
+    def __init__(self):
+        super().__init__()
+
+    def print_humans(self):
+        if self.humans:
             table = PrettyTable()
-            table.head_names = ['ID#', 'First Name', 'Last Name', 'Date of birth']
-            for human in self.humans_id:
+            table.field_names = ['ID#', 'First Name', 'Last Name', 'Date of birth']
+            for human in self.humans:
                 table.add_row([human[0], human[1], human[2], human[3]])
             return table
         else:
             return 'Base of humans is empty'
-
-    def watch_crimes(self):
-        if self.crimes_id:
-            table
-        return ['ID# 5{} Type: {}, adress: {}, date: {}'.format(i[0], i[1], i[2], i[3]) for i in self.crimes_id] if \
-            self.crimes_id is not [] else 'Base of crimes is empty'
-
-
-class HumanExists(Base):
-    def __init__(self, f_name, l_name, d_birth):
-        super().__init__()
-        self.f_name = f_name
-        self.l_name = l_name
-        self.d_birth = d_birth
-
-
-class CrimeExists(Base):
-    def __init__(self, date, adress, type):
-        super().__init__()
-        self.date = date
-        self.adress = adress
-        self.type = type
 
 
 class Human:
@@ -53,13 +33,23 @@ class Human:
         self.id = None
         self.base = None
 
-    def add_to_base(self, base):
-            self.base = base
-            self.base.humans_counter += 1
-            self.id = self.base.humans_counter
-            self.base.humans_id.append([self.id, self.f_name, self.l_name, self.d_birth])
-            print('ID# {} {} {} Date of birth: {} is added to Database'
-                  .format(self.id, self.f_name, self.l_name, self.d_birth))
+    def exists(self, base):
+        if base.humans:
+            for h in base.humans:
+                if h[1] == self.f_name and h[2] == self.l_name and h[3] == self.d_birth:
+                    return h[0]
+                else:
+                    return None
+
+    def add_to_base(self):
+        with open('Humans') as f:
+            size = sum(1 for string in f)
+        self.id = size+1
+        f = open('Humans', 'a')
+        f.write(' '.join([str(self.id), self.f_name, self.l_name, str(self.d_birth)]) + '\n')
+        f.close()
+        print('ID# {} {} {} Date of birth: {} is added to Database'
+              .format(self.id, self.f_name, self.l_name, self.d_birth))
 
 
 class Crime:
@@ -72,12 +62,22 @@ class Crime:
         self.victim = None
         self.base = None
 
+    def exists(self, base):
+        if base.crimes:
+            for c in base.humans:
+                if c[1] == self.date and c[2] == self.type and c[3] == self.adress:
+                    return c[0]
+                else:
+                    return None
+
     def add_to_base(self, base):
-        self.base = base
-        self.base.crimes_counter += 1
-        self.id = self.base.crimes_counter
-        self.base.crimes_id.append([self.id, self.type, self.adress, self.date])
-        print('ID#{} Type: {}, adress: {}, date: {} is added to database'
+        with open('Crimes') as f:
+            size = sum(1 for string in f)
+        self.id = size + 1
+        f = open('Crimes', 'a')
+        f.write(' '.join([str(self.id), self.date, self.type, str(self.adress)]) + '\n')
+        f.close()
+        print('ID#{} Type: {}, address: {}, date: {} is added to database'
               .format(self.id, self.type, self.adress, self.date))
 
 
@@ -103,25 +103,34 @@ class Victim(Human, Crime):
 
   #########  Functions   ########
 
+def get_humans(base):
+    with open('Humans', 'r') as h:
+        for human in h.readlines():
+            base.humans.append(human[:-1].split(' '))
+
+
+def get_crimes(base):
+    with open('Crimes', 'r') as c:
+        for crime in c.readlines():
+            base.crimes.append(crime[:-1].split(' '))
+
+
 def add_human(f_name, l_name, b_date):
-    exists = HumanExists(f_name, l_name, b_date)
-    if base.humans_id:
-        for i in base.humans_id:
-            if i[1] == exists.f_name and i[2] == exists.l_name and i[3] == exists.d_birth:
-                print('This human is already exists on ID# {}'.format(i[0]))
+    new_human = Human(f_name, l_name, b_date)
+    get_humans(base)
+    exists = new_human.exists(base)
+    if exists:
+        print('This human is already exists on ID# {}'.format(exists))
     else:
-        new_human = Human(f_name, l_name, b_date)
-        new_human.add_to_base(base)
+        new_human.add_to_base()
 
 
 def add_crime(date, adress, type):
-    exists = CrimeExists(date, adress, type)
-    if base.crimes_id:
-        for i in base.crimes_id:
-            if i[1] == exists.type and i[2] == exists.adress and i[3] == exists.date:
-                print('This crime is already exists on ID# {}'.format(i[0]))
+    new_crime = Crime(date, adress, type)
+    exists = new_crime.exists(base)
+    if exists:
+        print('This crime is already exists on ID# {}'.format(exists))
     else:
-        new_crime = Crime(date, adress, type)
         new_crime.add_to_base(base)
 
 
@@ -159,7 +168,8 @@ while True:
 ############################################
 
     elif choice == '3':
-        print(base.watch_humans())
+        get_humans(base)
+        print(base.humans)
 
 ############################################
 
