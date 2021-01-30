@@ -1,4 +1,3 @@
-from datetime import date
 from prettytable import PrettyTable
 
 
