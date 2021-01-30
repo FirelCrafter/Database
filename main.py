@@ -133,6 +133,16 @@ def add_crime(date, adress, type):
     else:
         new_crime.add_to_base(base)
 
+def print_humans(base):
+    get_humans(base)
+    if base.humans:
+        table = PrettyTable()
+        table.field_names = ['ID#', 'First Name', 'Last Name', 'Date of birth']
+        for human in base.humans:
+            table.add_row([human[0], human[1], human[2], human[3]])
+        return table
+    else:
+        return 'Base of humans is empty'
 
 ########################################################################################################################
 
@@ -168,8 +178,7 @@ while True:
 ############################################
 
     elif choice == '3':
-        get_humans(base)
-        print(base.humans)
+        print(print_humans(base))
 
 ############################################
 
