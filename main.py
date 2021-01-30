@@ -10,19 +10,18 @@ class Base:
         self.crimes = []
 
 
-class PrintData(Base):
-    def __init__(self):
+class Filter(Base):
+    def __init__(self, date=None, name=None):
         super().__init__()
+        self.date = date
+        self.name = name
 
-    def print_humans(self):
-        if self.humans:
-            table = PrettyTable()
-            table.field_names = ['ID#', 'First Name', 'Last Name', 'Date of birth']
-            for human in self.humans:
-                table.add_row([human[0], human[1], human[2], human[3]])
-            return table
-        else:
-            return 'Base of humans is empty'
+    def crimes_by_date(self):
+        if self.crimes:
+            crimes = []
+            for crime in self.crimes:
+                if self.date == crime[1]:
+                    crimes.append(crime)
 
 
 class Human:
@@ -133,6 +132,7 @@ def add_crime(date, adress, type):
     else:
         new_crime.add_to_base(base)
 
+
 def print_humans(base):
     get_humans(base)
     if base.humans:
@@ -143,6 +143,17 @@ def print_humans(base):
         return table
     else:
         return 'Base of humans is empty'
+
+def print_crimes(base):
+    get_crimes(base)
+    if base.crimes:
+        table = PrettyTable()
+        table.field_names = ['ID#', 'Date', 'Type', 'Address']
+        for crime in base.crimes:
+            table.add_row([crime[0], crime[1], crime[2], crime[3]])
+        return table
+    else:
+        return 'Base of crimes is empty'
 
 ########################################################################################################################
 
@@ -183,7 +194,7 @@ while True:
 ############################################
 
     elif choice == '4':
-        print(base.watch_crimes())
+        print(print_crimes(base))
 
 ############################################
 
