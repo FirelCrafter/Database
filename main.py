@@ -22,6 +22,36 @@ class Filter(Base):
             for crime in self.crimes:
                 if self.date == crime[1]:
                     crimes.append(crime)
+                else:
+                    return 'Crimes for date: {} not found'.format(self.date)
+            return crimes
+        else:
+            return 'Base of crimes is empty'
+
+    def levenshtein_distance(self, name):
+        if len(self.name) > len(name):
+            self.name, name = name, self.name
+
+        distances = range(len(self.name) + 1)
+        for i2, c2 in enumerate(name):
+            distances_ = [i2 + 1]
+            for i1, c1 in enumerate(self.name):
+                if c1 == c2:
+                    distances_.append(distances[i1])
+                else:
+                    distances_.append(1 + min((distances[i1], distances[i1 + 1], distances_[-1])))
+                distances = distances_
+                return distances[-1]
+
+    def humans_by_name(self, base):
+        if base.humans:
+            humans = []
+            for human in base.humans:
+                if self.name == human[1] or self.name == human[2]:
+                    humans.append(human)
+                return humans
+        else:
+            return self.humans
 
 
 class Human:
@@ -69,7 +99,7 @@ class Crime:
                 else:
                     return None
 
-    def add_to_base(self, base):
+    def add_to_base(self):
         with open('Crimes') as f:
             size = sum(1 for string in f)
         self.id = size + 1
@@ -130,7 +160,7 @@ def add_crime(date, adress, type):
     if exists:
         print('This crime is already exists on ID# {}'.format(exists))
     else:
-        new_crime.add_to_base(base)
+        new_crime.add_to_base()
 
 
 def print_humans(base):
@@ -144,6 +174,7 @@ def print_humans(base):
     else:
         return 'Base of humans is empty'
 
+
 def print_crimes(base):
     get_crimes(base)
     if base.crimes:
@@ -154,6 +185,16 @@ def print_crimes(base):
         return table
     else:
         return 'Base of crimes is empty'
+
+
+def search_human(base, name):
+    get_humans(base)
+    if base.humans:
+        name = Filter(name=name)
+        found = name.humans_by_name(base)
+        if found:
+            base.humans = found
+            print_humans(base)
 
 ########################################################################################################################
 
@@ -189,7 +230,8 @@ while True:
 ############################################
 
     elif choice == '3':
-        print(print_humans(base))
+        name = input('Enter name: ')
+        print(search_human(base, name))
 
 ############################################
 
