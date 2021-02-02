@@ -1,4 +1,4 @@
-from prettytable import PrettyTable
+import engine
 
 
     #########    Classes   ##############
@@ -29,19 +29,20 @@ class Filter(Base):
             return 'Base of crimes is empty'
 
     def levenshtein_distance(self, name):
-        if len(self.name) > len(name):
+        n, m = len(self.name), len(name)
+        if n > m:
             self.name, name = name, self.name
+            n, m = m, n
+        current_row = range(n + 1)
+        for i in range(1, m + 1):
+            previous_row, current_row = current_row, [i] + [0] * n
+            for j in range(1, n + 1):
+                add, delete, change = previous_row[j] + 1, current_row[j - 1] + 1, previous_row[j - 1]
+                if self.name[j - 1] != name[i - 1]:
+                    change += 1
+                current_row[j] = min(add, delete, change)
 
-        distances = range(len(self.name) + 1)
-        for i2, c2 in enumerate(name):
-            distances_ = [i2 + 1]
-            for i1, c1 in enumerate(self.name):
-                if c1 == c2:
-                    distances_.append(distances[i1])
-                else:
-                    distances_.append(1 + min((distances[i1], distances[i1 + 1], distances_[-1])))
-                distances = distances_
-                return distances[-1]
+        return current_row[n]
 
     def humans_by_name(self, base):
         if base.humans:
@@ -130,71 +131,6 @@ class Victim(Human, Crime):
     pass
 
 
-  #########  Functions   ########
-
-def get_humans(base):
-    with open('Humans', 'r') as h:
-        for human in h.readlines():
-            base.humans.append(human[:-1].split(' '))
-
-
-def get_crimes(base):
-    with open('Crimes', 'r') as c:
-        for crime in c.readlines():
-            base.crimes.append(crime[:-1].split(' '))
-
-
-def add_human(f_name, l_name, b_date):
-    new_human = Human(f_name, l_name, b_date)
-    get_humans(base)
-    exists = new_human.exists(base)
-    if exists:
-        print('This human is already exists on ID# {}'.format(exists))
-    else:
-        new_human.add_to_base()
-
-
-def add_crime(date, adress, type):
-    new_crime = Crime(date, adress, type)
-    exists = new_crime.exists(base)
-    if exists:
-        print('This crime is already exists on ID# {}'.format(exists))
-    else:
-        new_crime.add_to_base()
-
-
-def print_humans(base):
-    get_humans(base)
-    if base.humans:
-        table = PrettyTable()
-        table.field_names = ['ID#', 'First Name', 'Last Name', 'Date of birth']
-        for human in base.humans:
-            table.add_row([human[0], human[1], human[2], human[3]])
-        return table
-    else:
-        return 'Base of humans is empty'
-
-
-def print_crimes(base):
-    get_crimes(base)
-    if base.crimes:
-        table = PrettyTable()
-        table.field_names = ['ID#', 'Date', 'Type', 'Address']
-        for crime in base.crimes:
-            table.add_row([crime[0], crime[1], crime[2], crime[3]])
-        return table
-    else:
-        return 'Base of crimes is empty'
-
-
-def search_human(base, name):
-    get_humans(base)
-    if base.humans:
-        name = Filter(name=name)
-        found = name.humans_by_name(base)
-        if found:
-            base.humans = found
-            print_humans(base)
 
 ########################################################################################################################
 
@@ -216,27 +152,26 @@ while True:
         f_name = input('Enter first name: ')
         l_name = input('Enter last name: ')
         b_date = input('Enter birth date: ')
-        add_human(f_name, l_name, b_date)
+        engine.add_human(f_name, l_name, b_date)
 
 ############################################
 
     elif choice == '2':
         date = input('Enter date: ')
         type = input('Enter type: ')
-        adress = input('Enter adress: ')
-        add_crime(date, adress, type)
+        adress = input('Enter address: ')
+        engine.add_crime(date, adress, type)
 
 
 ############################################
 
     elif choice == '3':
-        name = input('Enter name: ')
-        print(search_human(base, name))
+        print(engine.print_humans(base))
 
 ############################################
 
     elif choice == '4':
-        print(print_crimes(base))
+        print(engine.print_crimes(base))
 
 ############################################
 
