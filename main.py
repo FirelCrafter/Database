@@ -10,16 +10,16 @@ class Base:
         self.crimes = []
 
 
-class Filter(Base):
-    def __init__(self, date=None, name=None):
-        super().__init__()
+class Filter:
+    def __init__(self, base, date=None, name=None):
         self.date = date
         self.name = name
+        self.base = base
 
     def crimes_by_date(self):
-        if self.crimes:
+        if self.base:
             crimes = []
-            for crime in self.crimes:
+            for crime in self.base:
                 if self.date == crime[1]:
                     crimes.append(crime)
                 else:
@@ -44,15 +44,15 @@ class Filter(Base):
 
         return current_row[n]
 
-    def humans_by_name(self, base):
+    def humans_by_name(self):
         if base.humans:
             humans = []
             for human in base.humans:
                 if self.name == human[1] or self.name == human[2]:
                     humans.append(human)
-                return humans
+            return humans
         else:
-            return self.humans
+            return 'Not found'
 
 
 class Human:
@@ -166,7 +166,8 @@ while True:
 ############################################
 
     elif choice == '3':
-        print(engine.print_humans(base))
+        humans = engine.get_humans(base)
+        print(engine.print_humans(humans))
 
 ############################################
 
@@ -176,28 +177,50 @@ while True:
 ############################################
 
     elif choice == '5':
-        h_id = input('Insert human ID # ')
-        c_id = input('Insert crime ID # ')
-        criminal = Criminal(h_id, c_id)
-        human = []
-        if base.humans_id:
-            for i in base.humans_id:
-                if i[0] == int(h_id):
-                    human.append([i[1], i[2], i[3]])
+
+        name = input('Input name: ')
+
+        def search_human(base, name):
+            engine.get_humans(base)
+            if base.humans:
+                name = Filter(base=base, name=name)
+                found = name.humans_by_name()
+                if found:
+                    return engine.print_humans(found)
                 else:
-                    print('Human ID # {} not found'.format(h_id))
-        crime = []
-        if base.crimes_id:
-            for i in base.crimes_id:
-                if i[0] == int(c_id):
-                    crime.append([i[0], i[1], i[2]])
-                else:
-                    print('Crime ID # {} not found'.format(c_id))
-        criminal.criminal_add(human+crime)
-        print('Connection between human ID# {} and crime ID# {} was added'.format(h_id, c_id))
+                    names = [name[1] for name in base.humans].append([name[2] for name in base.humans])
+
+
+
+        print(search_human(base, name))
 
 
     elif choice == '6':
         break
     else:
         print('Wrong number')
+
+
+
+####################################################
+        #
+        #
+        # h_id = input('Insert human ID # ')
+        # c_id = input('Insert crime ID # ')
+        # criminal = Criminal(h_id, c_id)
+        # human = []
+        # if base.humans_id:
+        #     for i in base.humans_id:
+        #         if i[0] == int(h_id):
+        #             human.append([i[1], i[2], i[3]])
+        #         else:
+        #             print('Human ID # {} not found'.format(h_id))
+        # crime = []
+        # if base.crimes_id:
+        #     for i in base.crimes_id:
+        #         if i[0] == int(c_id):
+        #             crime.append([i[0], i[1], i[2]])
+        #         else:
+        #             print('Crime ID # {} not found'.format(c_id))
+        # criminal.criminal_add(human+crime)
+        # print('Connection between human ID# {} and crime ID# {} was added'.format(h_id, c_id))

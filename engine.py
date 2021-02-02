@@ -5,6 +5,7 @@ def get_humans(base):
     with open('Humans', 'r') as h:
         for human in h.readlines():
             base.humans.append(human[:-1].split(' '))
+    return base.humans
 
 
 def get_crimes(base):
@@ -32,12 +33,11 @@ def add_crime(date, adress, type):
         new_crime.add_to_base()
 
 
-def print_humans(base):
-    get_humans(base)
-    if base.humans:
+def print_humans(humans):
+    if humans:
         table = PrettyTable()
         table.field_names = ['ID#', 'First Name', 'Last Name', 'Date of birth']
-        for human in base.humans:
+        for human in humans:
             table.add_row([human[0], human[1], human[2], human[3]])
         return table
     else:
