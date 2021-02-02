@@ -1,136 +1,5 @@
 import engine
-
-
-    #########    Classes   ##############
-
-
-class Base:
-    def __init__(self):
-        self.humans = []
-        self.crimes = []
-
-
-class Filter:
-    def __init__(self, base, date=None, name=None):
-        self.date = date
-        self.name = name
-        self.base = base
-
-    def crimes_by_date(self):
-        if self.base:
-            crimes = []
-            for crime in self.base:
-                if self.date == crime[1]:
-                    crimes.append(crime)
-                else:
-                    return 'Crimes for date: {} not found'.format(self.date)
-            return crimes
-        else:
-            return 'Base of crimes is empty'
-
-    def levenshtein_distance(self, name):
-        n, m = len(self.name), len(name)
-        if n > m:
-            self.name, name = name, self.name
-            n, m = m, n
-        current_row = range(n + 1)
-        for i in range(1, m + 1):
-            previous_row, current_row = current_row, [i] + [0] * n
-            for j in range(1, n + 1):
-                add, delete, change = previous_row[j] + 1, current_row[j - 1] + 1, previous_row[j - 1]
-                if self.name[j - 1] != name[i - 1]:
-                    change += 1
-                current_row[j] = min(add, delete, change)
-
-        return current_row[n]
-
-    def humans_by_name(self):
-        if base.humans:
-            humans = []
-            for human in base.humans:
-                if self.name == human[1] or self.name == human[2]:
-                    humans.append(human)
-            return humans
-        else:
-            return 'Not found'
-
-
-class Human:
-    def __init__(self, f_name, l_name, d_birth):
-        self.f_name = f_name
-        self.l_name = l_name
-        self.d_birth = d_birth
-        self.id = None
-        self.base = None
-
-    def exists(self, base):
-        if base.humans:
-            for h in base.humans:
-                if h[1] == self.f_name and h[2] == self.l_name and h[3] == self.d_birth:
-                    return h[0]
-                else:
-                    return None
-
-    def add_to_base(self):
-        with open('Humans') as f:
-            size = sum(1 for string in f)
-        self.id = size+1
-        f = open('Humans', 'a')
-        f.write(' '.join([str(self.id), self.f_name, self.l_name, str(self.d_birth)]) + '\n')
-        f.close()
-        print('ID# {} {} {} Date of birth: {} is added to Database'
-              .format(self.id, self.f_name, self.l_name, self.d_birth))
-
-
-class Crime:
-    def __init__(self, date, adress, type):
-        self.date = date
-        self.type = type
-        self.adress = adress
-        self.id = None
-        self.criminal = None
-        self.victim = None
-        self.base = None
-
-    def exists(self, base):
-        if base.crimes:
-            for c in base.humans:
-                if c[1] == self.date and c[2] == self.type and c[3] == self.adress:
-                    return c[0]
-                else:
-                    return None
-
-    def add_to_base(self):
-        with open('Crimes') as f:
-            size = sum(1 for string in f)
-        self.id = size + 1
-        f = open('Crimes', 'a')
-        f.write(' '.join([str(self.id), self.date, self.type, str(self.adress)]) + '\n')
-        f.close()
-        print('ID#{} Type: {}, address: {}, date: {} is added to database'
-              .format(self.id, self.type, self.adress, self.date))
-
-
-# думаю вот тут сделать наследников в виде преступника и жертвы, в них можно реализовать методы поиска по баз данных,
-# однако сам объект человека может быть как преступником в одном пресуплении, так и жертвой в другом преступлении,
-# такое часто бывает в реальной жизни, и чтобы не "дублировать людей" как бы это реализовать, я думаю создать еще список
-# в котором будут указываться преступления в которых человек был жертвой или преступником
-
-class Criminal(Base):
-    def __init__(self, h_id, c_id):
-        super().__init__()
-        self.h_id = h_id
-        self.c_id = c_id
-        self.criminal_list = []
-
-    def criminal_add(self, criminal):
-        self.criminal_list.append(criminal)
-
-
-class Victim(Human, Crime):
-    pass
-
-
+from base import Base
 
 ########################################################################################################################
 
@@ -166,34 +35,20 @@ while True:
 ############################################
 
     elif choice == '3':
-        humans = engine.get_humans(base)
+        humans = engine.get_humans()
         print(engine.print_humans(humans))
 
 ############################################
 
     elif choice == '4':
-        print(engine.print_crimes(base))
+        print(engine.print_crimes())
 
 ############################################
 
     elif choice == '5':
 
         name = input('Input name: ')
-
-        def search_human(base, name):
-            engine.get_humans(base)
-            if base.humans:
-                name = Filter(base=base, name=name)
-                found = name.humans_by_name()
-                if found:
-                    return engine.print_humans(found)
-                else:
-                    names = [name[1] for name in base.humans].append([name[2] for name in base.humans])
-
-
-
-        print(search_human(base, name))
-
+        print(engine.search_human(base, name))    
 
     elif choice == '6':
         break

@@ -1,11 +1,13 @@
 from prettytable import PrettyTable
+from base import Filter, Human, Crime
 
 
-def get_humans(base):
+def get_humans():
+    humans = []
     with open('Humans', 'r') as h:
         for human in h.readlines():
-            base.humans.append(human[:-1].split(' '))
-    return base.humans
+            humans.append(human[:-1].split(' '))
+    return humans
 
 
 def get_crimes(base):
@@ -16,8 +18,8 @@ def get_crimes(base):
 
 def add_human(f_name, l_name, b_date):
     new_human = Human(f_name, l_name, b_date)
-    get_humans(base)
-    exists = new_human.exists(base)
+    humans = get_humans()
+    exists = new_human.exists(humans)
     if exists:
         print('This human is already exists on ID# {}'.format(exists))
     else:
@@ -57,10 +59,24 @@ def print_crimes(base):
 
 
 def search_human(base, name):
-    get_humans(base)
-    if base.humans:
-        name = Filter(name=name)
-        found = name.humans_by_name(base)
+    humans = get_humans()
+    if humans:
+        f = Filter(base=base, name=name)
+        found = f.humans_by_name(humans)
         if found:
-            base.humans = found
-            print_humans(base)
+            return print_humans(found)
+        else:
+            names = [name[1] for name in humans] + [name[2] for name in humans]
+            distances = [f.levenshtein_distance(dist) for dist in names]
+            lev = dict(zip(names, distances))
+            rec_names = []
+            for key, value in lev.items():
+                if int(value) <= 3:
+                    rec_names.append(key)
+            if rec_names:
+                return 'Do you mean: ' + ', '.join(rec_names).strip(', ') + ' ?'
+            else:
+                return 'Person with name: {} not found.'.format(f.name)
+
+
+
