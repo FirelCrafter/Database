@@ -98,9 +98,9 @@ class Crime:
         self.victim = None
         self.base = None
 
-    def exists(self, base):
-        if base.crimes:
-            for c in base.humans:
+    def exists(self, crimes):
+        if crimes:
+            for c in crimes:
                 if c[1] == self.date and c[2] == self.type and c[3] == self.adress:
                     return c[0]
                 else:

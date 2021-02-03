@@ -41,7 +41,8 @@ while True:
 ############################################
 
     elif choice == '4':
-        print(engine.print_crimes())
+        crimes = engine.get_crimes()
+        print(engine.print_crimes(crimes))
 
 ############################################
 
@@ -54,7 +55,6 @@ while True:
         break
     else:
         print('Wrong number')
-
 
 
 ####################################################

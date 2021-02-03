@@ -10,10 +10,12 @@ def get_humans():
     return humans
 
 
-def get_crimes(base):
+def get_crimes():
+    crimes = []
     with open('Crimes', 'r') as c:
         for crime in c.readlines():
-            base.crimes.append(crime[:-1].split(' '))
+            crimes.append(crime[:-1].split(' '))
+    return crimes
 
 
 def add_human(f_name, l_name, b_date):
@@ -28,7 +30,8 @@ def add_human(f_name, l_name, b_date):
 
 def add_crime(date, adress, type):
     new_crime = Crime(date, adress, type)
-    exists = new_crime.exists(base)
+    crimes = get_crimes()
+    exists = new_crime.exists(crimes)
     if exists:
         print('This crime is already exists on ID# {}'.format(exists))
     else:
@@ -46,12 +49,11 @@ def print_humans(humans):
         return 'Base of humans is empty'
 
 
-def print_crimes(base):
-    get_crimes(base)
-    if base.crimes:
+def print_crimes(crimes):
+    if crimes:
         table = PrettyTable()
         table.field_names = ['ID#', 'Date', 'Type', 'Address']
-        for crime in base.crimes:
+        for crime in crimes:
             table.add_row([crime[0], crime[1], crime[2], crime[3]])
         return table
     else:
