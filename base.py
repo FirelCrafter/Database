@@ -13,12 +13,12 @@ class Filter:
         self.name = name
         self.base = base
 
-    def crimes_by_date(self):
-        if self.base:
-            crimes = []
-            for crime in self.base:
+    def crimes_by_date(self, crimes):
+        if crimes:
+            found = []
+            for crime in crimes:
                 if self.date == crime[1]:
-                    crimes.append(crime)
+                    found.append(crime)
                 else:
                     return 'Crimes for date: {} not found'.format(self.date)
             return crimes
@@ -85,8 +85,6 @@ class Human:
         print('ID# {} {} {} Date of birth: {} is added to Database'
               .format(self.id, self.f_name, self.l_name, self.d_birth))
 
-
-#TODO Переделать класс Crime
 
 class Crime:
     def __init__(self, date, adress, type):

@@ -1,5 +1,5 @@
 import engine
-from base import Base
+from base import Base, Filter
 
 ########################################################################################################################
 
@@ -9,7 +9,7 @@ print('Welcome to database!' + '\n'
       + '2. Add crime' + '\n'
       + '3. Watch humans' + '\n'
       + '4. Watch crimes' + '\n'
-      + '5. Add criminal connection' + '\n'
+      + '5. Find human by name' + '\n'
       + '6. Exit')
 base = Base()
 
@@ -47,12 +47,19 @@ while True:
 ############################################
 
     elif choice == '5':
-
         name = input('Input name: ')
         print(engine.search_human(base, name))    
 
     elif choice == '6':
-        break
+        crimes = engine.get_crimes()
+        if crimes:
+            date = input('Input date (DD.MM.YYYY): ')
+            f_date = Filter(date=date, base=base)
+            found = f_date.crimes_by_date(crimes)
+            if found:
+                print(engine.print_crimes(found))
+            else:
+                print('Crimes for date: {} not found'.format(date))
     else:
         print('Wrong number')
 
