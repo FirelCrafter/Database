@@ -10,7 +10,7 @@ print('Welcome to database!' + '\n'
       + '3. Watch humans' + '\n'
       + '4. Watch crimes' + '\n'
       + '5. Find human by name' + '\n'
-      + '6. Exit')
+      + '6. Get crimes by date')
 base = Base()
 
 while True:

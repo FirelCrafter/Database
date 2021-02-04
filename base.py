@@ -72,8 +72,8 @@ class Human:
             for h in humans:
                 if h[1] == self.f_name and h[2] == self.l_name and h[3] == self.d_birth:
                     return h[0]
-                else:
-                    return None
+            else:
+                return None
 
     def add_to_base(self):
         with open('Humans') as f:
@@ -101,8 +101,8 @@ class Crime:
             for c in crimes:
                 if c[1] == self.date and c[2] == self.type and c[3] == self.adress:
                     return c[0]
-                else:
-                    return None
+            else:
+                return None
 
     def add_to_base(self):
         with open('Crimes') as f:
