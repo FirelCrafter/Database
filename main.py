@@ -21,7 +21,7 @@ while True:
         f_name = input('Enter first name: ')
         l_name = input('Enter last name: ')
         b_date = input('Enter birth date: ')
-        engine.add_human(f_name, l_name, b_date)
+        engine.add_human(f_name, l_name, b_date, base)
 
 ############################################
 
