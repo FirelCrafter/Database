@@ -80,7 +80,7 @@ class Human:
         with open('Humans') as f:
             size = sum(1 for string in f)
         self.id = size + 1
-        f = open('Humans', 'a')
+        f = open('Humans', 'a+')
         f.write(' '.join([str(self.id), self.f_name, self.l_name, str(self.d_birth)]) + ' ' + str(d.date.today()) + '\n')
         f.close()
         print('ID# {} {} {} Date of birth: {} is added to Database'
@@ -109,7 +109,7 @@ class Crime:
         with open('Crimes') as f:
             size = sum(1 for string in f)
         self.id = size + 1
-        f = open('Crimes', 'a')
+        f = open('Crimes', 'a+')
         f.write(' '.join([str(self.id), self.date, self.type, str(self.adress)]) + '\n')
         f.close()
         print('ID#{} Type: {}, address: {}, date: {} is added to database'

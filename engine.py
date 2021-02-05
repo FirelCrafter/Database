@@ -44,37 +44,40 @@ def add_human(f_name, l_name, b_date, base):
     new_human = Human(f_name, l_name, b_date)
     humans = get_humans()
     exists = new_human.exists(humans)
-    if exists:
-        print('This human is already exists on ID# {}'.format(exists))
-    else:
-        f1 = Filter(name=f_name, base=base)
-        f2 = Filter(name=l_name, base=base)
-        names = [name[1] for name in humans] + [name[2] for name in humans]
-        distances = [f1.levenshtein_distance(dist) for dist in names] + [f2.levenshtein_distance(dist) for dist in names]
-        lev = dict(zip(names, distances))
-        rec_names = []
-        for key, value in lev.items():
-            if int(value) <= 5:
-                rec_names.append(key)
-        if rec_names:
-            rec_humans = []
-            for h in humans:
-                if h[1] in rec_names and h[2] in rec_names:
-                    rec_humans.append(h)
-            if rec_humans:
-                print('Do you mean these humans?')
-                print(print_humans(rec_humans))
-                answer = input('Input y/n: ')
-                if answer == 'y':
-                    return
-                elif answer == 'n':
-                    new_human.add_to_base()
+    if humans:
+        if exists:
+            print('This human is already exists on ID# {}'.format(exists))
+        else:
+            f1 = Filter(name=f_name, base=base)
+            f2 = Filter(name=l_name, base=base)
+            names = [name[1] for name in humans] + [name[2] for name in humans]
+            distances = [f1.levenshtein_distance(dist) for dist in names] + [f2.levenshtein_distance(dist) for dist in names]
+            lev = dict(zip(names, distances))
+            rec_names = []
+            for key, value in lev.items():
+                if int(value) <= 5:
+                    rec_names.append(key)
+            if rec_names:
+                rec_humans = []
+                for h in humans:
+                    if h[1] in rec_names and h[2] in rec_names:
+                        rec_humans.append(h)
+                if rec_humans:
+                    print('Do you mean these humans?')
+                    print(print_humans(rec_humans))
+                    answer = input('Input y/n: ')
+                    if answer == 'y':
+                        return
+                    elif answer == 'n':
+                        new_human.add_to_base()
+                    else:
+                        print('Wrong input')
                 else:
-                    print('Wrong input')
+                    new_human.add_to_base()
             else:
                 new_human.add_to_base()
-        else:
-            new_human.add_to_base()
+    else:
+        new_human.add_to_base()
 
 
 def add_crime(date, adress, type):
