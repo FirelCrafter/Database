@@ -21,9 +21,9 @@ def get_crimes():
 def print_humans(humans):
     if humans:
         table = PrettyTable()
-        table.field_names = ['ID#', 'First Name', 'Last Name', 'Date of birth']
+        table.field_names = ['ID#', 'First Name', 'Last Name', 'Date of birth', 'Date added to base']
         for human in humans:
-            table.add_row([human[0], human[1], human[2], human[3]])
+            table.add_row([human[0], human[1], human[2], human[3], human[4]])
         return table
     else:
         return 'Base of humans is empty'

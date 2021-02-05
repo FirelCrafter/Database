@@ -1,4 +1,5 @@
 import numpy as np
+import datetime as d
 
 
 class Base:
@@ -80,7 +81,7 @@ class Human:
             size = sum(1 for string in f)
         self.id = size + 1
         f = open('Humans', 'a')
-        f.write(' '.join([str(self.id), self.f_name, self.l_name, str(self.d_birth)]) + '\n')
+        f.write(' '.join([str(self.id), self.f_name, self.l_name, str(self.d_birth)]) + ' ' + str(d.date.today()) + '\n')
         f.close()
         print('ID# {} {} {} Date of birth: {} is added to Database'
               .format(self.id, self.f_name, self.l_name, self.d_birth))
