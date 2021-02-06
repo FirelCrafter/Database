@@ -1,5 +1,6 @@
 from prettytable import PrettyTable
 from base import Filter, Human, Crime
+from datetime import datetime, time, date
 
 
 def get_humans():
@@ -109,3 +110,14 @@ def search_human(base, name):
                 return 'Do you mean: ' + ', '.join(rec_names).strip(', ') + ' ?'
             else:
                 return 'Person with name: {} not found.'.format(f.name)
+
+
+def get_humans_by_period(from_date, to_date, humans):
+    found_humans = []
+    for human in humans:
+        get_date = datetime.strptime(human[4], '%d/%m/%Y')
+        diff1 = to_date - get_date
+        diff2 = to_date - from_date
+        if diff1 <= diff2:
+            found_humans.append(human)
+    return found_humans

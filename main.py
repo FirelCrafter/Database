@@ -1,6 +1,6 @@
 import engine
 from base import Base, Filter
-import datetime
+from datetime import datetime, time, date
 
 ########################################################################################################################
 
@@ -11,7 +11,8 @@ print('Welcome to database!' + '\n'
       + '3. Watch humans' + '\n'
       + '4. Watch crimes' + '\n'
       + '5. Find human by name' + '\n'
-      + '6. Get crimes by date')
+      + '6. Get crimes by date' + '\n'
+      + '7. Get humans by period')
 base = Base()
 
 while True:
@@ -49,7 +50,9 @@ while True:
 
     elif choice == '5':
         name = input('Input name: ')
-        print(engine.search_human(base, name))    
+        print(engine.search_human(base, name))
+
+#############################################
 
     elif choice == '6':
         crimes = engine.get_crimes()
@@ -61,6 +64,20 @@ while True:
                 print(engine.print_crimes(found))
             else:
                 print('Crimes for date: {} not found'.format(date))
+
+##################################################
+
+    elif choice == '7':
+        humans = engine.get_humans()
+        if humans:
+            from_date = datetime.strptime(input('Enter start period date (DD/MM/YYYY): '), '%d/%m/%Y')
+            to_date = datetime.strptime(input('Enter end period date: '), '%d/%m/%Y')
+            found_humans = engine.get_humans_by_period(from_date=from_date, to_date=to_date, humans=humans)
+            if found_humans:
+                print(engine.print_humans(found_humans))
+            else:
+                print('Humans not found')
+
     else:
         print('Wrong number')
 
